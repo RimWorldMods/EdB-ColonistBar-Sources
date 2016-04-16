@@ -389,7 +389,7 @@ namespace EdB.Interface
 
 		protected List<IPreference> preferences = new List<IPreference> ();
 
-		protected bool enableGroups = true;
+		protected bool enableGroups = false;
 
 		protected KeyBindingDef previousGroupKeyBinding = null;
 
@@ -2400,6 +2400,8 @@ namespace EdB.Interface
 		//
 		private bool loadedTextures = false;
 
+		private bool initialized = false;
+
 		private int height;
 
 		private int width;
@@ -2444,9 +2446,23 @@ namespace EdB.Interface
 		}
 
 		//
-		// Constructors
+		// Methods
 		//
-		public ComponentColonistBar ()
+		public void ColonistNotificationHandler (ColonistNotification notification)
+		{
+			if (notification.type == ColonistNotificationType.New) {
+				this.defaultGroup.Add (notification.colonist);
+			}
+			else if (notification.type == ColonistNotificationType.Buried || notification.type == ColonistNotificationType.Lost || notification.type == ColonistNotificationType.Deleted) {
+				this.defaultGroup.Remove (notification.colonist);
+			}
+		}
+
+		public override void ExposeData ()
+		{
+		}
+
+		public void Initialize ()
 		{
 			ColonistTracker.Instance.Reset ();
 			this.defaultGroups.Add (this.defaultGroup);
@@ -2463,33 +2479,20 @@ namespace EdB.Interface
 			});
 		}
 
-		//
-		// Methods
-		//
-		public void ColonistNotificationHandler (ColonistNotification notification)
-		{
-			if (notification.type == ColonistNotificationType.New) {
-				this.defaultGroup.Add (notification.colonist);
-			}
-			else if (notification.type == ColonistNotificationType.Buried || notification.type == ColonistNotificationType.Lost || notification.type == ColonistNotificationType.Deleted) {
-				this.defaultGroup.Remove (notification.colonist);
-			}
-		}
-
-		public void Initialize ()
-		{
-		}
-
 		public override void MapComponentOnGUI ()
 		{
-			if (this.loadedTextures) {
+			if (this.initialized && this.loadedTextures) {
 				this.colonistBar.Draw ();
 			}
 		}
 
 		public override void MapComponentUpdate ()
 		{
-			if (this.loadedTextures) {
+			if (!this.initialized) {
+				this.initialized = true;
+				this.Initialize ();
+			}
+			if (this.initialized && this.loadedTextures) {
 				ColonistTracker.Instance.Update ();
 				if (this.width != Screen.get_width () || this.height != Screen.get_height ()) {
 					this.width = Screen.get_width ();
@@ -2497,11 +2500,6 @@ namespace EdB.Interface
 					this.colonistBar.UpdateScreenSize (this.width, this.height);
 				}
 			}
-		}
-
-		public void PrepareDependencies ()
-		{
-			ColonistTracker.Instance.ColonistChanged += new ColonistNotificationHandler (this.ColonistNotificationHandler);
 		}
 	}
 }
@@ -2830,16 +2828,12 @@ namespace EdB.Interface
 
 		public Texture2D Load ()
 		{
-			this.texture = ContentFinder<Texture2D>.Get (this.resource, true);
 			this.loaded = true;
-			Texture2D badTex;
+			this.texture = ContentFinder<Texture2D>.Get (this.resource, true);
 			if (this.texture == null) {
-				badTex = BaseContent.BadTex;
+				this.texture = BaseContent.BadTex;
 			}
-			else {
-				badTex = this.texture;
-			}
-			return badTex;
+			return this.texture;
 		}
 	}
 }
