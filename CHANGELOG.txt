@@ -1,0 +1,7 @@
+ _____________________________________________________________________________
+ 
+   Version 0.13.0.1 (2016-04-09) 
+ _____________________________________________________________________________
+
+  - Initial version of Colonist Bar mod, separated out of the main Interface
+    mod as a map component, for Alpha 13.
