@@ -208,15 +208,15 @@ namespace EdB.Interface
 		//
 		// Static Fields
 		//
-		protected static Texture2D ButtonBGAtlas;
+		public static LazyLoadTexture ButtonBGAtlas = new LazyLoadTexture ("EdB/Interface/TextButton");
 
-		protected static readonly Texture2D ButtonBGAtlasMouseover = ContentFinder<Texture2D>.Get ("UI/Widgets/ButtonBGMouseover", true);
-
-		protected static readonly Texture2D ButtonBGAtlasClick = ContentFinder<Texture2D>.Get ("UI/Widgets/ButtonBGClick", true);
+		protected static readonly Color MouseoverOptionColor = Color.get_yellow ();
 
 		protected static Color InactiveButtonColor = new Color (1, 1, 1, 0.5);
 
-		protected static readonly Color MouseoverOptionColor = Color.get_yellow ();
+		public static LazyLoadTexture ButtonBGAtlasClick = new LazyLoadTexture ("UI/Widgets/ButtonBGClick");
+
+		public static LazyLoadTexture ButtonBGAtlasMouseover = new LazyLoadTexture ("UI/Widgets/ButtonBGMouseover");
 
 		//
 		// Static Methods
@@ -234,16 +234,16 @@ namespace EdB.Interface
 				else {
 					GUI.set_color (Color.get_white ());
 				}
-				Texture2D texture2D = Button.ButtonBGAtlas;
+				Texture2D texture2 = Button.ButtonBGAtlas.Texture;
 				if (enabled) {
 					if (rect.Contains (Event.get_current ().get_mousePosition ())) {
-						texture2D = Button.ButtonBGAtlasMouseover;
+						texture2 = Button.ButtonBGAtlasMouseover.Texture;
 						if (Input.GetMouseButton (0)) {
-							texture2D = Button.ButtonBGAtlasClick;
+							texture2 = Button.ButtonBGAtlasClick.Texture;
 						}
 					}
 				}
-				Widgets.DrawAtlas (rect, texture2D);
+				Widgets.DrawAtlas (rect, texture2);
 				Rect rect2 = new Rect (rect.get_x () + rect.get_width () / 2 - (float)(texture.get_width () / 2), rect.get_y () + rect.get_height () / 2 - (float)(texture.get_height () / 2), (float)texture.get_width (), (float)texture.get_height ());
 				if (!enabled) {
 					GUI.set_color (Button.InactiveButtonColor);
@@ -287,25 +287,20 @@ namespace EdB.Interface
 			return Widgets.InvisibleButton (butRect);
 		}
 
-		public static void ResetTextures ()
-		{
-			Button.ButtonBGAtlas = ContentFinder<Texture2D>.Get ("EdB/Interface/TextButton", true);
-		}
-
 		public static bool TextButton (Rect rect, string label, bool drawBackground, bool doMouseoverSound, bool enabled)
 		{
 			TextAnchor anchor = Text.get_Anchor ();
 			Color color = GUI.get_color ();
 			GUI.set_color (enabled ? Color.get_white () : Button.InactiveButtonColor);
 			if (drawBackground) {
-				Texture2D texture2D = Button.ButtonBGAtlas;
+				Texture2D texture = Button.ButtonBGAtlas.Texture;
 				if (enabled && rect.Contains (Event.get_current ().get_mousePosition ())) {
-					texture2D = Button.ButtonBGAtlasMouseover;
+					texture = Button.ButtonBGAtlasMouseover.Texture;
 					if (Input.GetMouseButton (0)) {
-						texture2D = Button.ButtonBGAtlasClick;
+						texture = Button.ButtonBGAtlasClick.Texture;
 					}
 				}
-				Widgets.DrawAtlas (rect, texture2D);
+				Widgets.DrawAtlas (rect, texture);
 			}
 			if (doMouseoverSound) {
 				MouseoverSounds.DoRegion (rect);
@@ -355,17 +350,15 @@ namespace EdB.Interface
 
 		protected static float GroupNameEaseOutStart = ColonistBar.GroupNameDisplayDuration - ColonistBar.GroupNameEaseOutDuration;
 
-		protected static Texture2D BrowseGroupsDown;
+		public static LazyLoadTexture BrowseGroupsDown = new LazyLoadTexture ("EdB/Interface/ColonistBar/BrowseGroupDown");
 
 		protected static readonly bool LoggingEnabled = false;
 
-		protected static Texture2D BrowseGroupsUp;
+		public static LazyLoadTexture BrowseGroupsUp = new LazyLoadTexture ("EdB/Interface/ColonistBar/BrowseGroupUp");
 
 		//
 		// Fields
 		//
-		protected PreferenceSmallIcons preferenceSmallIcons = new PreferenceSmallIcons ();
-
 		protected bool alwaysShowGroupName = false;
 
 		protected List<TrackedColonist> slots = new List<TrackedColonist> ();
@@ -380,7 +373,7 @@ namespace EdB.Interface
 
 		protected KeyCode lastKey;
 
-		protected PreferenceEnabled preferenceEnabled = new PreferenceEnabled ();
+		protected PreferenceSmallIcons preferenceSmallIcons = new PreferenceSmallIcons ();
 
 		protected string currentGroupId = "";
 
@@ -390,7 +383,9 @@ namespace EdB.Interface
 
 		protected float squadNameDisplayTimestamp = 0;
 
-		protected bool barVisible = true;
+		protected List<KeyBindingDef> squadSelectionBindings = new List<KeyBindingDef> ();
+
+		protected PreferenceEnabled preferenceEnabled = new PreferenceEnabled ();
 
 		protected List<IPreference> preferences = new List<IPreference> ();
 
@@ -399,8 +394,6 @@ namespace EdB.Interface
 		protected KeyBindingDef previousGroupKeyBinding = null;
 
 		protected KeyBindingDef nextGroupKeyBinding = null;
-
-		protected List<KeyBindingDef> squadSelectionBindings = new List<KeyBindingDef> ();
 
 		//
 		// Properties
@@ -488,15 +481,6 @@ namespace EdB.Interface
 		}
 
 		//
-		// Static Methods
-		//
-		public static void ResetTextures ()
-		{
-			ColonistBar.BrowseGroupsUp = ContentFinder<Texture2D>.Get ("EdB/Interface/ColonistBar/BrowseGroupUp", true);
-			ColonistBar.BrowseGroupsDown = ContentFinder<Texture2D>.Get ("EdB/Interface/ColonistBar/BrowseGroupDown", true);
-		}
-
-		//
 		// Methods
 		//
 		public void AddGroup (ColonistBarGroup group)
@@ -527,7 +511,7 @@ namespace EdB.Interface
 							if (butRect.Contains (Event.get_current ().get_mousePosition ())) {
 								this.squadNameDisplayTimestamp = Time.get_time ();
 							}
-							if (Button.ImageButton (butRect, ColonistBar.BrowseGroupsUp, ColonistBar.BrowseButtonHighlightColor)) {
+							if (Button.ImageButton (butRect, ColonistBar.BrowseGroupsUp.Texture, ColonistBar.BrowseButtonHighlightColor)) {
 								this.SelectNextGroup (-1);
 							}
 							GUI.set_color (ColonistBar.BrowseButtonColor);
@@ -535,7 +519,7 @@ namespace EdB.Interface
 							if (butRect.Contains (Event.get_current ().get_mousePosition ())) {
 								this.squadNameDisplayTimestamp = Time.get_time ();
 							}
-							if (Button.ImageButton (butRect, ColonistBar.BrowseGroupsDown, ColonistBar.BrowseButtonHighlightColor)) {
+							if (Button.ImageButton (butRect, ColonistBar.BrowseGroupsDown.Texture, ColonistBar.BrowseButtonHighlightColor)) {
 								this.SelectNextGroup (1);
 							}
 							GUI.set_color (Color.get_white ());
@@ -633,7 +617,7 @@ namespace EdB.Interface
 		{
 			this.drawerGameObject = new GameObject ("ColonistBarDrawer");
 			this.drawer = this.drawerGameObject.AddComponent<ColonistBarDrawer> ();
-			this.barVisible = this.drawer.Visible;
+			this.drawer.set_enabled (false);
 		}
 
 		protected void ResetGroupNameDisplay ()
@@ -779,11 +763,11 @@ namespace EdB.Interface
 
 		public static Vector2 BackgroundOffsetLarge = new Vector2 (0, 0);
 
-		public static readonly Texture2D UnhappyTex = ContentFinder<Texture2D>.Get ("Things/Pawn/Effects/Unhappy", true);
+		public static LazyLoadTexture UnhappyTex = new LazyLoadTexture ("Things/Pawn/Effects/Unhappy");
 
-		public static readonly Texture2D MentalBreakImminentTex = ContentFinder<Texture2D>.Get ("Things/Pawn/Effects/MentalStateImminent", true);
+		public static LazyLoadTexture MentalBreakImminentTex = new LazyLoadTexture ("Things/Pawn/Effects/MentalStateImminent");
 
-		public static Texture2D ToggleButton = ContentFinder<Texture2D>.Get ("EdB/Interface/ColonistBar/ToggleBar", true);
+		public static LazyLoadTexture ToggleButton = new LazyLoadTexture ("EdB/Interface/ColonistBar/ToggleBar");
 
 		public static Vector2 StartingPosition = new Vector2 (640, 16);
 
@@ -864,11 +848,11 @@ namespace EdB.Interface
 
 		protected Mesh headMesh;
 
-		protected SelectorUtility pawnSelector = new SelectorUtility ();
+		protected MaterialPropertyBlock deadPropertyBlock = new MaterialPropertyBlock ();
 
 		protected MaterialPropertyBlock cryptosleepPropertyBlock = new MaterialPropertyBlock ();
 
-		protected MaterialPropertyBlock deadPropertyBlock = new MaterialPropertyBlock ();
+		protected SelectorUtility pawnSelector = new SelectorUtility ();
 
 		//
 		// Properties
@@ -898,34 +882,6 @@ namespace EdB.Interface
 		}
 
 		//
-		// Constructors
-		//
-		public ColonistBarDrawer ()
-		{
-			ColonistBarDrawer.ResetTextures ();
-		}
-
-		//
-		// Static Methods
-		//
-		public static void ResetTextures ()
-		{
-			ColonistBarDrawer.SlotBackgroundMatLarge = MaterialPool.MatFrom ("EdB/Interface/ColonistBar/PortraitBackgroundLarge");
-			ColonistBarDrawer.SlotBackgroundMatLarge.get_mainTexture ().set_filterMode (0);
-			ColonistBarDrawer.SlotBordersMatLarge = MaterialPool.MatFrom ("EdB/Interface/ColonistBar/PortraitBordersLarge");
-			ColonistBarDrawer.SlotBordersMatLarge.get_mainTexture ().set_filterMode (0);
-			ColonistBarDrawer.SlotSelectedMatLarge = MaterialPool.MatFrom ("EdB/Interface/ColonistBar/PortraitSelectedLarge");
-			ColonistBarDrawer.SlotSelectedMatLarge.get_mainTexture ().set_filterMode (0);
-			ColonistBarDrawer.SlotBackgroundMatSmall = MaterialPool.MatFrom ("EdB/Interface/ColonistBar/PortraitBackgroundSmall");
-			ColonistBarDrawer.SlotBackgroundMatSmall.get_mainTexture ().set_filterMode (0);
-			ColonistBarDrawer.SlotBordersMatSmall = MaterialPool.MatFrom ("EdB/Interface/ColonistBar/PortraitBordersSmall");
-			ColonistBarDrawer.SlotBordersMatSmall.get_mainTexture ().set_filterMode (0);
-			ColonistBarDrawer.SlotSelectedMatSmall = MaterialPool.MatFrom ("EdB/Interface/ColonistBar/PortraitSelectedSmall");
-			ColonistBarDrawer.SlotSelectedMatSmall.get_mainTexture ().set_filterMode (0);
-			ColonistBarDrawer.ToggleButton = ContentFinder<Texture2D>.Get ("EdB/Interface/ColonistBar/ToggleBar", true);
-		}
-
-		//
 		// Methods
 		//
 		protected bool CanSelect (Pawn pawn)
@@ -936,7 +892,6 @@ namespace EdB.Interface
 		public void Draw ()
 		{
 			if (this.visible) {
-				this.OnGUI ();
 				this.camera.Render ();
 			}
 		}
@@ -1128,10 +1083,10 @@ namespace EdB.Interface
 				GUI.set_color (new Color (1, 1, 1));
 				if (!slot.Cryptosleep) {
 					if (slot.MentalBreakWarningLevel == 2 && (double)Time.get_time () % 1.2 < 0.4) {
-						GUI.DrawTexture (new Rect (position.x + ColonistBarDrawer.PortraitOffset.x, position.y + ColonistBarDrawer.PortraitOffset.y, ColonistBarDrawer.MentalHealthSize.x, ColonistBarDrawer.MentalHealthSize.y), ColonistBarDrawer.MentalBreakImminentTex);
+						ColonistBarDrawer.MentalBreakImminentTex.Draw (new Rect (position.x + ColonistBarDrawer.PortraitOffset.x, position.y + ColonistBarDrawer.PortraitOffset.y, ColonistBarDrawer.MentalHealthSize.x, ColonistBarDrawer.MentalHealthSize.y));
 					}
 					else if (slot.MentalBreakWarningLevel == 1 && (double)Time.get_time () % 1.2 < 0.4) {
-						GUI.DrawTexture (new Rect (position.x + ColonistBarDrawer.MentalHealthOffset.x, position.y + ColonistBarDrawer.MentalHealthOffset.y, ColonistBarDrawer.MentalHealthSize.x, ColonistBarDrawer.MentalHealthSize.y), ColonistBarDrawer.UnhappyTex);
+						ColonistBarDrawer.UnhappyTex.Draw (new Rect (position.x + ColonistBarDrawer.MentalHealthOffset.x, position.y + ColonistBarDrawer.MentalHealthOffset.y, ColonistBarDrawer.MentalHealthSize.x, ColonistBarDrawer.MentalHealthSize.y));
 					}
 				}
 			}
@@ -1156,8 +1111,9 @@ namespace EdB.Interface
 		public void DrawToggleButton ()
 		{
 			if (!this.visible) {
-				Rect rect = new Rect ((float)(Screen.get_width () - ColonistBarDrawer.ToggleButton.get_width () - 16), ColonistBarDrawer.StartingPosition.y + 4, (float)ColonistBarDrawer.ToggleButton.get_width (), (float)ColonistBarDrawer.ToggleButton.get_height ());
-				GUI.DrawTexture (rect, ColonistBarDrawer.ToggleButton);
+				Texture2D texture = ColonistBarDrawer.ToggleButton.Texture;
+				Rect rect = new Rect ((float)(Screen.get_width () - texture.get_width () - 16), ColonistBarDrawer.StartingPosition.y + 4, (float)texture.get_width (), (float)texture.get_height ());
+				ColonistBarDrawer.ToggleButton.Draw (rect);
 				if (Widgets.InvisibleButton (rect)) {
 					SoundStarter.PlayOneShotOnCamera (SoundDefOf.TickTiny);
 					this.visible = true;
@@ -1307,6 +1263,22 @@ namespace EdB.Interface
 		{
 			float num = ColonistBarDrawer.SlotSize.x + ColonistBarDrawer.SlotPadding.x - 8;
 			ColonistBarDrawer.MaxLabelSize = new Vector2 (num, 12);
+		}
+
+		public void ResetTextures ()
+		{
+			ColonistBarDrawer.SlotBackgroundMatLarge = MaterialPool.MatFrom ("EdB/Interface/ColonistBar/PortraitBackgroundLarge");
+			ColonistBarDrawer.SlotBackgroundMatLarge.get_mainTexture ().set_filterMode (0);
+			ColonistBarDrawer.SlotBordersMatLarge = MaterialPool.MatFrom ("EdB/Interface/ColonistBar/PortraitBordersLarge");
+			ColonistBarDrawer.SlotBordersMatLarge.get_mainTexture ().set_filterMode (0);
+			ColonistBarDrawer.SlotSelectedMatLarge = MaterialPool.MatFrom ("EdB/Interface/ColonistBar/PortraitSelectedLarge");
+			ColonistBarDrawer.SlotSelectedMatLarge.get_mainTexture ().set_filterMode (0);
+			ColonistBarDrawer.SlotBackgroundMatSmall = MaterialPool.MatFrom ("EdB/Interface/ColonistBar/PortraitBackgroundSmall");
+			ColonistBarDrawer.SlotBackgroundMatSmall.get_mainTexture ().set_filterMode (0);
+			ColonistBarDrawer.SlotBordersMatSmall = MaterialPool.MatFrom ("EdB/Interface/ColonistBar/PortraitBordersSmall");
+			ColonistBarDrawer.SlotBordersMatSmall.get_mainTexture ().set_filterMode (0);
+			ColonistBarDrawer.SlotSelectedMatSmall = MaterialPool.MatFrom ("EdB/Interface/ColonistBar/PortraitSelectedSmall");
+			ColonistBarDrawer.SlotSelectedMatSmall.get_mainTexture ().set_filterMode (0);
 		}
 
 		protected void ResizeMeshes ()
@@ -2426,15 +2398,17 @@ namespace EdB.Interface
 		//
 		// Fields
 		//
-		private ColonistBar colonistBar;
+		private bool loadedTextures = false;
 
-		private ColonistBarGroup defaultGroup = new ColonistBarGroup ();
-
-		private List<ColonistBarGroup> defaultGroups = new List<ColonistBarGroup> ();
+		private int height;
 
 		private int width;
 
-		private int height;
+		private List<ColonistBarGroup> defaultGroups = new List<ColonistBarGroup> ();
+
+		private ColonistBarGroup defaultGroup = new ColonistBarGroup ();
+
+		private ColonistBar colonistBar;
 
 		//
 		// Properties
@@ -2482,6 +2456,11 @@ namespace EdB.Interface
 			this.width = Screen.get_width ();
 			this.height = Screen.get_height ();
 			ColonistTracker.Instance.ColonistChanged += new ColonistNotificationHandler (this.ColonistNotificationHandler);
+			LongEventHandler.ExecuteWhenFinished (delegate {
+				this.colonistBar.Drawer.ResetTextures ();
+				this.colonistBar.Drawer.set_enabled (true);
+				this.loadedTextures = true;
+			});
 		}
 
 		//
@@ -2503,28 +2482,26 @@ namespace EdB.Interface
 
 		public override void MapComponentOnGUI ()
 		{
-			this.colonistBar.Draw ();
+			if (this.loadedTextures) {
+				this.colonistBar.Draw ();
+			}
 		}
 
 		public override void MapComponentUpdate ()
 		{
-			ColonistTracker.Instance.Update ();
-			if (this.width != Screen.get_width () || this.height != Screen.get_height ()) {
-				this.width = Screen.get_width ();
-				this.height = Screen.get_height ();
-				this.colonistBar.UpdateScreenSize (this.width, this.height);
+			if (this.loadedTextures) {
+				ColonistTracker.Instance.Update ();
+				if (this.width != Screen.get_width () || this.height != Screen.get_height ()) {
+					this.width = Screen.get_width ();
+					this.height = Screen.get_height ();
+					this.colonistBar.UpdateScreenSize (this.width, this.height);
+				}
 			}
 		}
 
 		public void PrepareDependencies ()
 		{
 			ColonistTracker.Instance.ColonistChanged += new ColonistNotificationHandler (this.ColonistNotificationHandler);
-		}
-
-		public void ResetTextures ()
-		{
-			ColonistBar.ResetTextures ();
-			ColonistBarDrawer.ResetTextures ();
 		}
 	}
 }
@@ -2801,6 +2778,69 @@ namespace EdB.Interface
 		// Methods
 		//
 		void OnGUI (float positionX, ref float positionY, float width);
+	}
+}
+using System;
+using UnityEngine;
+using Verse;
+
+namespace EdB.Interface
+{
+	public class LazyLoadTexture
+	{
+		//
+		// Fields
+		//
+		private string resource;
+
+		private Texture2D texture;
+
+		private bool loaded = false;
+
+		//
+		// Properties
+		//
+		public Texture2D Texture {
+			get {
+				if (!this.loaded) {
+					this.Load ();
+				}
+				return this.texture;
+			}
+		}
+
+		//
+		// Constructors
+		//
+		public LazyLoadTexture (string resource)
+		{
+			this.resource = resource;
+		}
+
+		//
+		// Methods
+		//
+		public void Draw (Rect rect)
+		{
+			Texture2D texture2D = this.Texture;
+			if (texture2D != null) {
+				GUI.DrawTexture (rect, texture2D);
+			}
+		}
+
+		public Texture2D Load ()
+		{
+			this.texture = ContentFinder<Texture2D>.Get (this.resource, true);
+			this.loaded = true;
+			Texture2D badTex;
+			if (this.texture == null) {
+				badTex = BaseContent.BadTex;
+			}
+			else {
+				badTex = this.texture;
+			}
+			return badTex;
+		}
 	}
 }
 using System;
@@ -4263,42 +4303,25 @@ namespace EdB.Interface
 		//
 		// Static Fields
 		//
-		public static readonly Texture2D RadioButOnTex;
+		public static LazyLoadTexture RadioButOnTex = new LazyLoadTexture ("UI/Widgets/RadioButOn");
 
-		public static float LabelMargin;
+		public static float LabelMargin = WidgetDrawer.CheckboxWidth + WidgetDrawer.CheckboxMargin;
 
-		public static float CheckboxMargin;
+		public static float CheckboxMargin = 18;
 
-		public static float CheckboxHeight;
+		public static float CheckboxHeight = 30;
 
-		public static float CheckboxWidth;
+		public static float CheckboxWidth = 24;
 
-		public static Vector2 PreferencePadding;
+		public static Vector2 PreferencePadding = new Vector2 (8, 6);
 
-		public static readonly Texture2D RadioButOffTex;
+		public static LazyLoadTexture RadioButOffTex = new LazyLoadTexture ("UI/Widgets/RadioButOff");
 
-		public static Color DisabledControlColor;
+		public static Color DisabledControlColor = new Color (1, 1, 1, 0.5);
 
-		public static float SectionPadding;
+		public static float SectionPadding = 14;
 
-		public static float IndentSize;
-
-		//
-		// Constructors
-		//
-		static WidgetDrawer ()
-		{
-			WidgetDrawer.DisabledControlColor = new Color (1, 1, 1, 0.5);
-			WidgetDrawer.SectionPadding = 14;
-			WidgetDrawer.IndentSize = 16;
-			WidgetDrawer.PreferencePadding = new Vector2 (8, 6);
-			WidgetDrawer.CheckboxWidth = 24;
-			WidgetDrawer.CheckboxHeight = 30;
-			WidgetDrawer.CheckboxMargin = 18;
-			WidgetDrawer.LabelMargin = WidgetDrawer.CheckboxWidth + WidgetDrawer.CheckboxMargin;
-			WidgetDrawer.RadioButOnTex = ContentFinder<Texture2D>.Get ("UI/Widgets/RadioButOn", true);
-			WidgetDrawer.RadioButOffTex = ContentFinder<Texture2D>.Get ("UI/Widgets/RadioButOff", true);
-		}
+		public static float IndentSize = 16;
 
 		//
 		// Static Methods
@@ -4342,15 +4365,15 @@ namespace EdB.Interface
 
 		public static void DrawRadioButton (Vector2 topLeft, bool chosen)
 		{
-			Texture2D texture2D;
+			Texture2D texture;
 			if (chosen) {
-				texture2D = WidgetDrawer.RadioButOnTex;
+				texture = WidgetDrawer.RadioButOnTex.Texture;
 			}
 			else {
-				texture2D = WidgetDrawer.RadioButOffTex;
+				texture = WidgetDrawer.RadioButOffTex.Texture;
 			}
 			Rect rect = new Rect (topLeft.x, topLeft.y, 24, 24);
-			GUI.DrawTexture (rect, texture2D);
+			GUI.DrawTexture (rect, texture);
 		}
 	}
 }
