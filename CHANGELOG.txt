@@ -1,0 +1,26 @@
+ _____________________________________________________________________________
+ 
+   Version 0.13.0.3 (2016-04-15) 
+ _____________________________________________________________________________
+
+  - Attempting to fix memory leak.  Removed initialization logic from the
+    ComponentColonistBar constructor to avoid problems caused by two instances
+    getting constructed when loading a map.
+
+ _____________________________________________________________________________
+ 
+   Version 0.13.0.2 (2016-04-10) 
+ _____________________________________________________________________________
+
+  - Attempted to fix the Linux thread-related crashing problem.
+  - Removed extra textures.
+
+ _____________________________________________________________________________
+ 
+   Version 0.13.0.1 (2016-04-09) 
+ _____________________________________________________________________________
+
+  - Initial version of Colonist Bar mod, separated out of the main Interface
+    mod as a map component, for Alpha 13.
+
+ 
