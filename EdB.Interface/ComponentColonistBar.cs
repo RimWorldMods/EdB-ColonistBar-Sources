@@ -19,6 +19,8 @@ namespace EdB.Interface
 
 		private int height;
 
+		private bool initialized = false;
+
 		public List<ColonistBarGroup> DefaultGroups
 		{
 			get
@@ -59,7 +61,11 @@ namespace EdB.Interface
 			}
 		}
 
-		public ComponentColonistBar()
+		public override void ExposeData()
+		{
+		}
+
+		public void Initialize()
 		{
 			ColonistTracker.Instance.Reset();
 			this.defaultGroups.Add(this.defaultGroup);
@@ -77,18 +83,14 @@ namespace EdB.Interface
 			});
 		}
 
-		public void PrepareDependencies()
-		{
-			ColonistTracker.Instance.ColonistChanged += new ColonistNotificationHandler(this.ColonistNotificationHandler);
-		}
-
-		public void Initialize()
-		{
-		}
-
 		public override void MapComponentUpdate()
 		{
-			if (this.loadedTextures)
+			if (!this.initialized)
+			{
+				this.initialized = true;
+				this.Initialize();
+			}
+			if (this.initialized && this.loadedTextures)
 			{
 				ColonistTracker.Instance.Update();
 				if (this.width != Screen.width || this.height != Screen.height)
@@ -102,7 +104,7 @@ namespace EdB.Interface
 
 		public override void MapComponentOnGUI()
 		{
-			if (this.loadedTextures)
+			if (this.initialized && this.loadedTextures)
 			{
 				this.colonistBar.Draw();
 			}

@@ -31,18 +31,13 @@ namespace EdB.Interface
 
 		public Texture2D Load()
 		{
-			this.texture = ContentFinder<Texture2D>.Get(this.resource, true);
 			this.loaded = true;
-			Texture2D badTex;
+			this.texture = ContentFinder<Texture2D>.Get(this.resource, true);
 			if (this.texture == null)
 			{
-				badTex = BaseContent.BadTex;
+				this.texture = BaseContent.BadTex;
 			}
-			else
-			{
-				badTex = this.texture;
-			}
-			return badTex;
+			return this.texture;
 		}
 
 		public void Draw(Rect rect)

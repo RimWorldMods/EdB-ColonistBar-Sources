@@ -38,7 +38,7 @@ namespace EdB.Interface
 
 		protected KeyBindingDef previousGroupKeyBinding = null;
 
-		protected bool enableGroups = true;
+		protected bool enableGroups = false;
 
 		protected List<IPreference> preferences = new List<IPreference>();
 

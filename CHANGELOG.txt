@@ -1,5 +1,14 @@
  _____________________________________________________________________________
  
+   Version 0.13.0.3 (2016-04-15) 
+ _____________________________________________________________________________
+
+  - Attempting to fix memory leak.  Removed initialization logic from the
+    ComponentColonistBar constructor to avoid problems caused by two instances
+    getting constructed when loading a map.
+
+ _____________________________________________________________________________
+ 
    Version 0.13.0.2 (2016-04-10) 
  _____________________________________________________________________________
 
