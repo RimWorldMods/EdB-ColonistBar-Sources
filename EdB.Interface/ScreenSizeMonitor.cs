@@ -12,19 +12,7 @@ namespace EdB.Interface
 
 		protected int height;
 
-		public event ScreenSizeMonitor.ScreenSizeChangeHandler Changed
-		{
-			[MethodImpl(MethodImplOptions.Synchronized)]
-			add
-			{
-				this.Changed = (ScreenSizeMonitor.ScreenSizeChangeHandler)Delegate.Combine(this.Changed, value);
-			}
-			[MethodImpl(MethodImplOptions.Synchronized)]
-			remove
-			{
-				this.Changed = (ScreenSizeMonitor.ScreenSizeChangeHandler)Delegate.Remove(this.Changed, value);
-			}
-		}
+		public event ScreenSizeMonitor.ScreenSizeChangeHandler Changed;
 
 		public int Width
 		{

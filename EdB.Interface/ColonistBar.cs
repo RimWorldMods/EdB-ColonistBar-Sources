@@ -64,19 +64,7 @@ namespace EdB.Interface
 
 		protected KeyCode lastKey;
 
-		public event ColonistBar.SelectedGroupChangedHandler SelectedGroupChanged
-		{
-			[MethodImpl(MethodImplOptions.Synchronized)]
-			add
-			{
-				this.SelectedGroupChanged = (ColonistBar.SelectedGroupChangedHandler)Delegate.Combine(this.SelectedGroupChanged, value);
-			}
-			[MethodImpl(MethodImplOptions.Synchronized)]
-			remove
-			{
-				this.SelectedGroupChanged = (ColonistBar.SelectedGroupChangedHandler)Delegate.Remove(this.SelectedGroupChanged, value);
-			}
-		}
+		public event ColonistBar.SelectedGroupChangedHandler SelectedGroupChanged;
 
 		public ColonistBarDrawer Drawer
 		{

@@ -23,19 +23,7 @@ namespace EdB.Interface
 
 		public static float LabelMargin = IntegerOptionsPreference.RadioButtonWidth + IntegerOptionsPreference.RadioButtonMargin;
 
-		public event IntegerOptionsPreference.ValueChangedHandler ValueChanged
-		{
-			[MethodImpl(MethodImplOptions.Synchronized)]
-			add
-			{
-				this.ValueChanged = (IntegerOptionsPreference.ValueChangedHandler)Delegate.Combine(this.ValueChanged, value);
-			}
-			[MethodImpl(MethodImplOptions.Synchronized)]
-			remove
-			{
-				this.ValueChanged = (IntegerOptionsPreference.ValueChangedHandler)Delegate.Remove(this.ValueChanged, value);
-			}
-		}
+		public event IntegerOptionsPreference.ValueChangedHandler ValueChanged;
 
 		public abstract string Name
 		{

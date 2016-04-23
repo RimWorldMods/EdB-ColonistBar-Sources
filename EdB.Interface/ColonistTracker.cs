@@ -27,33 +27,9 @@ namespace EdB.Interface
 
 		protected bool initialized = false;
 
-		public event ColonistNotificationHandler ColonistChanged
-		{
-			[MethodImpl(MethodImplOptions.Synchronized)]
-			add
-			{
-				this.ColonistChanged = (ColonistNotificationHandler)Delegate.Combine(this.ColonistChanged, value);
-			}
-			[MethodImpl(MethodImplOptions.Synchronized)]
-			remove
-			{
-				this.ColonistChanged = (ColonistNotificationHandler)Delegate.Remove(this.ColonistChanged, value);
-			}
-		}
+		public event ColonistNotificationHandler ColonistChanged;
 
-		public event ColonistListSyncNeededHandler ColonistListSyncNeeded
-		{
-			[MethodImpl(MethodImplOptions.Synchronized)]
-			add
-			{
-				this.ColonistListSyncNeeded = (ColonistListSyncNeededHandler)Delegate.Combine(this.ColonistListSyncNeeded, value);
-			}
-			[MethodImpl(MethodImplOptions.Synchronized)]
-			remove
-			{
-				this.ColonistListSyncNeeded = (ColonistListSyncNeededHandler)Delegate.Remove(this.ColonistListSyncNeeded, value);
-			}
-		}
+		public event ColonistListSyncNeededHandler ColonistListSyncNeeded;
 
 		public static ColonistTracker Instance
 		{
@@ -175,7 +151,6 @@ namespace EdB.Interface
 			this.colonistsInFaction.Clear();
 			foreach (Pawn pawn in Find.MapPawns.PawnsInFaction(Faction.OfColony))
 			{
-				Pawn pawn;
 				this.pawnsInFaction.Add(pawn);
 				if (pawn.IsColonist)
 				{
