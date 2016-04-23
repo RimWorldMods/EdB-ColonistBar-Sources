@@ -8,39 +8,25 @@ namespace EdB.Interface
 {
 	public static class WidgetDrawer
 	{
-		public static readonly Texture2D RadioButOnTex;
+		public static LazyLoadTexture RadioButOnTex = new LazyLoadTexture("UI/Widgets/RadioButOn");
 
-		public static readonly Texture2D RadioButOffTex;
+		public static LazyLoadTexture RadioButOffTex = new LazyLoadTexture("UI/Widgets/RadioButOff");
 
-		public static Color DisabledControlColor;
+		public static Color DisabledControlColor = new Color(1f, 1f, 1f, 0.5f);
 
-		public static float SectionPadding;
+		public static float SectionPadding = 14f;
 
-		public static float IndentSize;
+		public static float IndentSize = 16f;
 
-		public static Vector2 PreferencePadding;
+		public static Vector2 PreferencePadding = new Vector2(8f, 6f);
 
-		public static float CheckboxWidth;
+		public static float CheckboxWidth = 24f;
 
-		public static float CheckboxHeight;
+		public static float CheckboxHeight = 30f;
 
-		public static float CheckboxMargin;
+		public static float CheckboxMargin = 18f;
 
-		public static float LabelMargin;
-
-		static WidgetDrawer()
-		{
-			WidgetDrawer.DisabledControlColor = new Color(1f, 1f, 1f, 0.5f);
-			WidgetDrawer.SectionPadding = 14f;
-			WidgetDrawer.IndentSize = 16f;
-			WidgetDrawer.PreferencePadding = new Vector2(8f, 6f);
-			WidgetDrawer.CheckboxWidth = 24f;
-			WidgetDrawer.CheckboxHeight = 30f;
-			WidgetDrawer.CheckboxMargin = 18f;
-			WidgetDrawer.LabelMargin = WidgetDrawer.CheckboxWidth + WidgetDrawer.CheckboxMargin;
-			WidgetDrawer.RadioButOnTex = ContentFinder<Texture2D>.Get("UI/Widgets/RadioButOn", true);
-			WidgetDrawer.RadioButOffTex = ContentFinder<Texture2D>.Get("UI/Widgets/RadioButOff", true);
-		}
+		public static float LabelMargin = WidgetDrawer.CheckboxWidth + WidgetDrawer.CheckboxMargin;
 
 		public static bool DrawLabeledRadioButton(Rect rect, string labelText, bool chosen, bool playSound)
 		{
@@ -61,17 +47,17 @@ namespace EdB.Interface
 
 		public static void DrawRadioButton(Vector2 topLeft, bool chosen)
 		{
-			Texture2D image;
+			Texture2D texture;
 			if (chosen)
 			{
-				image = WidgetDrawer.RadioButOnTex;
+				texture = WidgetDrawer.RadioButOnTex.Texture;
 			}
 			else
 			{
-				image = WidgetDrawer.RadioButOffTex;
+				texture = WidgetDrawer.RadioButOffTex.Texture;
 			}
 			Rect position = new Rect(topLeft.x, topLeft.y, 24f, 24f);
-			GUI.DrawTexture(position, image);
+			GUI.DrawTexture(position, texture);
 		}
 
 		public static float DrawLabeledCheckbox(Rect rect, string labelText, ref bool value)

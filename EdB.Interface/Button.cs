@@ -7,20 +7,15 @@ namespace EdB.Interface
 {
 	public class Button
 	{
-		protected static Texture2D ButtonBGAtlas;
+		public static LazyLoadTexture ButtonBGAtlas = new LazyLoadTexture("EdB/Interface/TextButton");
 
-		protected static readonly Texture2D ButtonBGAtlasMouseover = ContentFinder<Texture2D>.Get("UI/Widgets/ButtonBGMouseover", true);
+		public static LazyLoadTexture ButtonBGAtlasMouseover = new LazyLoadTexture("UI/Widgets/ButtonBGMouseover");
 
-		protected static readonly Texture2D ButtonBGAtlasClick = ContentFinder<Texture2D>.Get("UI/Widgets/ButtonBGClick", true);
+		public static LazyLoadTexture ButtonBGAtlasClick = new LazyLoadTexture("UI/Widgets/ButtonBGClick");
 
 		protected static Color InactiveButtonColor = new Color(1f, 1f, 1f, 0.5f);
 
 		protected static readonly Color MouseoverOptionColor = Color.yellow;
-
-		public static void ResetTextures()
-		{
-			Button.ButtonBGAtlas = ContentFinder<Texture2D>.Get("EdB/Interface/TextButton", true);
-		}
 
 		public static bool ImageButton(Rect butRect, Texture2D tex, Color baseColor, Color mouseOverColor)
 		{
@@ -50,19 +45,19 @@ namespace EdB.Interface
 				{
 					GUI.color = Color.white;
 				}
-				Texture2D atlas = Button.ButtonBGAtlas;
+				Texture2D texture2 = Button.ButtonBGAtlas.Texture;
 				if (enabled)
 				{
 					if (rect.Contains(Event.current.mousePosition))
 					{
-						atlas = Button.ButtonBGAtlasMouseover;
+						texture2 = Button.ButtonBGAtlasMouseover.Texture;
 						if (Input.GetMouseButton(0))
 						{
-							atlas = Button.ButtonBGAtlasClick;
+							texture2 = Button.ButtonBGAtlasClick.Texture;
 						}
 					}
 				}
-				Widgets.DrawAtlas(rect, atlas);
+				Widgets.DrawAtlas(rect, texture2);
 				Rect position = new Rect(rect.x + rect.width / 2f - (float)(texture.width / 2), rect.y + rect.height / 2f - (float)(texture.height / 2), (float)texture.width, (float)texture.height);
 				if (!enabled)
 				{
@@ -90,16 +85,16 @@ namespace EdB.Interface
 			GUI.color = (enabled ? Color.white : Button.InactiveButtonColor);
 			if (drawBackground)
 			{
-				Texture2D atlas = Button.ButtonBGAtlas;
+				Texture2D texture = Button.ButtonBGAtlas.Texture;
 				if (enabled && rect.Contains(Event.current.mousePosition))
 				{
-					atlas = Button.ButtonBGAtlasMouseover;
+					texture = Button.ButtonBGAtlasMouseover.Texture;
 					if (Input.GetMouseButton(0))
 					{
-						atlas = Button.ButtonBGAtlasClick;
+						texture = Button.ButtonBGAtlasClick.Texture;
 					}
 				}
-				Widgets.DrawAtlas(rect, atlas);
+				Widgets.DrawAtlas(rect, texture);
 			}
 			if (doMouseoverSound)
 			{

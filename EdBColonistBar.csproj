@@ -47,6 +47,7 @@
     <Compile Include="EdB.Interface/ComponentColonistTracker.cs" />
     <Compile Include="EdB.Interface/IntegerOptionsPreference.cs" />
     <Compile Include="EdB.Interface/IPreference.cs" />
+    <Compile Include="EdB.Interface/LazyLoadTexture.cs" />
     <Compile Include="EdB.Interface/MultipleSelectionStringOptionsPreference.cs" />
     <Compile Include="EdB.Interface/PreferenceEnabled.cs" />
     <Compile Include="EdB.Interface/PreferenceGroup.cs" />

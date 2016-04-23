@@ -7,6 +7,8 @@ namespace EdB.Interface
 {
 	public class ComponentColonistBar : MapComponent
 	{
+		private bool loadedTextures = false;
+
 		private ColonistBar colonistBar;
 
 		private ColonistBarGroup defaultGroup = new ColonistBarGroup();
@@ -67,6 +69,12 @@ namespace EdB.Interface
 			this.width = Screen.width;
 			this.height = Screen.height;
 			ColonistTracker.Instance.ColonistChanged += new ColonistNotificationHandler(this.ColonistNotificationHandler);
+			LongEventHandler.ExecuteWhenFinished(delegate
+			{
+				this.colonistBar.Drawer.ResetTextures();
+				this.colonistBar.Drawer.enabled = true;
+				this.loadedTextures = true;
+			});
 		}
 
 		public void PrepareDependencies()
@@ -80,24 +88,24 @@ namespace EdB.Interface
 
 		public override void MapComponentUpdate()
 		{
-			ColonistTracker.Instance.Update();
-			if (this.width != Screen.width || this.height != Screen.height)
+			if (this.loadedTextures)
 			{
-				this.width = Screen.width;
-				this.height = Screen.height;
-				this.colonistBar.UpdateScreenSize(this.width, this.height);
+				ColonistTracker.Instance.Update();
+				if (this.width != Screen.width || this.height != Screen.height)
+				{
+					this.width = Screen.width;
+					this.height = Screen.height;
+					this.colonistBar.UpdateScreenSize(this.width, this.height);
+				}
 			}
 		}
 
 		public override void MapComponentOnGUI()
 		{
-			this.colonistBar.Draw();
-		}
-
-		public void ResetTextures()
-		{
-			ColonistBar.ResetTextures();
-			ColonistBarDrawer.ResetTextures();
+			if (this.loadedTextures)
+			{
+				this.colonistBar.Draw();
+			}
 		}
 
 		public void ColonistNotificationHandler(ColonistNotification notification)

@@ -12,9 +12,9 @@ namespace EdB.Interface
 
 		protected static readonly bool LoggingEnabled = false;
 
-		protected static Texture2D BrowseGroupsUp;
+		public static LazyLoadTexture BrowseGroupsUp = new LazyLoadTexture("EdB/Interface/ColonistBar/BrowseGroupUp");
 
-		protected static Texture2D BrowseGroupsDown;
+		public static LazyLoadTexture BrowseGroupsDown = new LazyLoadTexture("EdB/Interface/ColonistBar/BrowseGroupDown");
 
 		protected ColonistBarDrawer drawer = null;
 
@@ -31,8 +31,6 @@ namespace EdB.Interface
 		private bool displayGroupName = true;
 
 		protected float squadNameDisplayTimestamp = 0f;
-
-		protected bool barVisible = true;
 
 		protected List<KeyBindingDef> squadSelectionBindings = new List<KeyBindingDef>();
 
@@ -176,12 +174,6 @@ namespace EdB.Interface
 			}
 		}
 
-		public static void ResetTextures()
-		{
-			ColonistBar.BrowseGroupsUp = ContentFinder<Texture2D>.Get("EdB/Interface/ColonistBar/BrowseGroupUp", true);
-			ColonistBar.BrowseGroupsDown = ContentFinder<Texture2D>.Get("EdB/Interface/ColonistBar/BrowseGroupDown", true);
-		}
-
 		public ColonistBar()
 		{
 			this.preferences.Add(this.preferenceEnabled);
@@ -201,7 +193,7 @@ namespace EdB.Interface
 		{
 			this.drawerGameObject = new GameObject("ColonistBarDrawer");
 			this.drawer = this.drawerGameObject.AddComponent<ColonistBarDrawer>();
-			this.barVisible = this.drawer.Visible;
+			this.drawer.enabled = false;
 		}
 
 		public void UpdateGroups(List<ColonistBarGroup> groups, ColonistBarGroup selected)
@@ -281,7 +273,7 @@ namespace EdB.Interface
 							{
 								this.squadNameDisplayTimestamp = Time.time;
 							}
-							if (Button.ImageButton(butRect, ColonistBar.BrowseGroupsUp, ColonistBar.BrowseButtonHighlightColor))
+							if (Button.ImageButton(butRect, ColonistBar.BrowseGroupsUp.Texture, ColonistBar.BrowseButtonHighlightColor))
 							{
 								this.SelectNextGroup(-1);
 							}
@@ -291,7 +283,7 @@ namespace EdB.Interface
 							{
 								this.squadNameDisplayTimestamp = Time.time;
 							}
-							if (Button.ImageButton(butRect, ColonistBar.BrowseGroupsDown, ColonistBar.BrowseButtonHighlightColor))
+							if (Button.ImageButton(butRect, ColonistBar.BrowseGroupsDown.Texture, ColonistBar.BrowseButtonHighlightColor))
 							{
 								this.SelectNextGroup(1);
 							}

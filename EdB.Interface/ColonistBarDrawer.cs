@@ -27,11 +27,11 @@ namespace EdB.Interface
 
 		public static Material SlotSelectedMatSmall = null;
 
-		public static readonly Texture2D UnhappyTex = ContentFinder<Texture2D>.Get("Things/Pawn/Effects/Unhappy", true);
+		public static LazyLoadTexture UnhappyTex = new LazyLoadTexture("Things/Pawn/Effects/Unhappy");
 
-		public static readonly Texture2D MentalBreakImminentTex = ContentFinder<Texture2D>.Get("Things/Pawn/Effects/MentalStateImminent", true);
+		public static LazyLoadTexture MentalBreakImminentTex = new LazyLoadTexture("Things/Pawn/Effects/MentalStateImminent");
 
-		public static Texture2D ToggleButton = ContentFinder<Texture2D>.Get("EdB/Interface/ColonistBar/ToggleBar", true);
+		public static LazyLoadTexture ToggleButton = new LazyLoadTexture("EdB/Interface/ColonistBar/ToggleBar");
 
 		public static Vector2 StartingPosition = new Vector2(640f, 16f);
 
@@ -193,7 +193,7 @@ namespace EdB.Interface
 			}
 		}
 
-		public static void ResetTextures()
+		public void ResetTextures()
 		{
 			ColonistBarDrawer.SlotBackgroundMatLarge = MaterialPool.MatFrom("EdB/Interface/ColonistBar/PortraitBackgroundLarge");
 			ColonistBarDrawer.SlotBackgroundMatLarge.mainTexture.filterMode = FilterMode.Point;
@@ -207,19 +207,12 @@ namespace EdB.Interface
 			ColonistBarDrawer.SlotBordersMatSmall.mainTexture.filterMode = FilterMode.Point;
 			ColonistBarDrawer.SlotSelectedMatSmall = MaterialPool.MatFrom("EdB/Interface/ColonistBar/PortraitSelectedSmall");
 			ColonistBarDrawer.SlotSelectedMatSmall.mainTexture.filterMode = FilterMode.Point;
-			ColonistBarDrawer.ToggleButton = ContentFinder<Texture2D>.Get("EdB/Interface/ColonistBar/ToggleBar", true);
-		}
-
-		public ColonistBarDrawer()
-		{
-			ColonistBarDrawer.ResetTextures();
 		}
 
 		public void Draw()
 		{
 			if (this.visible)
 			{
-				this.OnGUI();
 				this.camera.Render();
 			}
 		}
@@ -296,8 +289,9 @@ namespace EdB.Interface
 		{
 			if (!this.visible)
 			{
-				Rect rect = new Rect((float)(Screen.width - ColonistBarDrawer.ToggleButton.width - 16), ColonistBarDrawer.StartingPosition.y + 4f, (float)ColonistBarDrawer.ToggleButton.width, (float)ColonistBarDrawer.ToggleButton.height);
-				GUI.DrawTexture(rect, ColonistBarDrawer.ToggleButton);
+				Texture2D texture = ColonistBarDrawer.ToggleButton.Texture;
+				Rect rect = new Rect((float)(Screen.width - texture.width - 16), ColonistBarDrawer.StartingPosition.y + 4f, (float)texture.width, (float)texture.height);
+				ColonistBarDrawer.ToggleButton.Draw(rect);
 				if (Widgets.InvisibleButton(rect))
 				{
 					SoundDefOf.TickTiny.PlayOneShotOnCamera();
@@ -740,11 +734,11 @@ namespace EdB.Interface
 				{
 					if (slot.MentalBreakWarningLevel == 2 && (double)Time.time % 1.2 < 0.4)
 					{
-						GUI.DrawTexture(new Rect(position.x + ColonistBarDrawer.PortraitOffset.x, position.y + ColonistBarDrawer.PortraitOffset.y, ColonistBarDrawer.MentalHealthSize.x, ColonistBarDrawer.MentalHealthSize.y), ColonistBarDrawer.MentalBreakImminentTex);
+						ColonistBarDrawer.MentalBreakImminentTex.Draw(new Rect(position.x + ColonistBarDrawer.PortraitOffset.x, position.y + ColonistBarDrawer.PortraitOffset.y, ColonistBarDrawer.MentalHealthSize.x, ColonistBarDrawer.MentalHealthSize.y));
 					}
 					else if (slot.MentalBreakWarningLevel == 1 && (double)Time.time % 1.2 < 0.4)
 					{
-						GUI.DrawTexture(new Rect(position.x + ColonistBarDrawer.MentalHealthOffset.x, position.y + ColonistBarDrawer.MentalHealthOffset.y, ColonistBarDrawer.MentalHealthSize.x, ColonistBarDrawer.MentalHealthSize.y), ColonistBarDrawer.UnhappyTex);
+						ColonistBarDrawer.UnhappyTex.Draw(new Rect(position.x + ColonistBarDrawer.MentalHealthOffset.x, position.y + ColonistBarDrawer.MentalHealthOffset.y, ColonistBarDrawer.MentalHealthSize.x, ColonistBarDrawer.MentalHealthSize.y));
 					}
 				}
 			}
